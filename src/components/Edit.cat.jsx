@@ -20,13 +20,8 @@ const EditCategory = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${CATEGORY_API}/categories/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    api
+      .get(`${CATEGORY_API}/categories/${id}`)
       .then((res) => {
         if (res.data && res.data.category) {
           setFormData({

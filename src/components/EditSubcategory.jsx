@@ -23,13 +23,9 @@ const EditSubcategory = () => {
 
   // Fetch subcategory data and parent categories
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    
     // Fetch categories first
-    axios
-      .get(`${CATEGORY_API}/categories`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    api
+      .get(`${CATEGORY_API}/categories`)
       .then((res) => {
         setCategories(
           res.data && Array.isArray(res.data.categories)
@@ -40,10 +36,8 @@ const EditSubcategory = () => {
       .catch((err) => console.error("Error fetching categories:", err));
 
     // Fetch the specific subcategory details
-    axios
-      .get(`${CATEGORY_API}/subcategories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    api
+      .get(`${CATEGORY_API}/subcategories/${id}`)
       .then((res) => {
         if (res.data && res.data.subcategory) {
           const sub = res.data.subcategory;

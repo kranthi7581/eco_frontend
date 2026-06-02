@@ -1,3 +1,4 @@
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-export const AUTH_API = "http://localhost:5000/auth";
-export const CATEGORY_API = "http://localhost:5000";
+export const AUTH_API = `${baseURL}/auth`;
+export const CATEGORY_API = baseURL;

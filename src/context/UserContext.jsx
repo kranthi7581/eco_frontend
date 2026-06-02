@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
 import api from "../services/api";
 import { AUTH_API, CATEGORY_API } from "../repo/Apis";
 
