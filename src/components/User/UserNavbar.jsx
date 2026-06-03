@@ -37,10 +37,9 @@ const UserNavbar = () => {
   // Fetch Category/Subcategory list for Navbar dropdowns
   useEffect(() => {
     const fetchMenuData = async () => {
-      const tokenVal = localStorage.getItem("token") || token;
-      if (!tokenVal) return;
       try {
-        const headers = { Authorization: `Bearer ${tokenVal}` };
+        const tokenVal = localStorage.getItem("token") || token;
+        const headers = tokenVal ? { Authorization: `Bearer ${tokenVal}` } : {};
         const catRes = await api.get(`${CATEGORY_API}/categories`, { headers }).catch(() => null);
         if (catRes && catRes.data) {
           const list = catRes.data.categories || catRes.data;

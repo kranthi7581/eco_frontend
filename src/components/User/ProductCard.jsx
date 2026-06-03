@@ -5,7 +5,7 @@ import { CATEGORY_API } from "../../repo/Apis";
 import { Link } from "react-router-dom";
 
 const ProductCard = ({ product, onQuickView }) => {
-  const { wishlist, addToWishlist, removeFromWishlist, addToCart, token } = useUser();
+  const { wishlist, addToWishlist, removeFromWishlist, addToCart, token, triggerAuthModal } = useUser();
   const [addingToCartState, setAddingToCartState] = useState(false);
   const [wishlistUpdating, setWishlistUpdating] = useState(false);
 
@@ -29,31 +29,32 @@ const ProductCard = ({ product, onQuickView }) => {
   const handleWishlistToggle = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!token) {
-      alert("Please log in to save items to your wishlist.");
-      return;
-    }
-    setWishlistUpdating(true);
-    try {
-      if (isWishlisted) {
-        await removeFromWishlist(product.id);
-      } else {
-        await addToWishlist(product.id);
+
+    const toggle = async () => {
+      setWishlistUpdating(true);
+      try {
+        if (isWishlisted) {
+          await removeFromWishlist(product.id);
+        } else {
+          await addToWishlist(product.id);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setWishlistUpdating(false);
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setWishlistUpdating(false);
+    };
+
+    if (!token) {
+      triggerAuthModal(toggle);
+    } else {
+      await toggle();
     }
   };
 
   const handleAddToCartClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!token) {
-      alert("Please log in to add items to your cart.");
-      return;
-    }
     setAddingToCartState(true);
     const res = await addToCart(product.id);
     if (res && !res.success) {

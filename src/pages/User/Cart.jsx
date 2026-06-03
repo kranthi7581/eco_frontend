@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const Cart = () => {
-  const { cart, removeFromCart, updateCartQuantity, cartLoading } = useUser();
+  const { cart, removeFromCart, updateCartQuantity, cartLoading, token, triggerAuthModal } = useUser();
   const navigate = useNavigate();
 
   // Coupon Code State
@@ -58,16 +58,24 @@ const Cart = () => {
   const totalAmount = subtotal - discountAmount + shippingAmount;
 
   const handleCheckoutProceed = () => {
-    // Navigate to checkout with pricing states as query parameters or state
-    navigate("/checkout", {
-      state: {
-        subtotal,
-        discountAmount,
-        shippingAmount,
-        totalAmount,
-        appliedCoupon: couponCode.trim().toUpperCase()
-      }
-    });
+    const proceed = () => {
+      // Navigate to checkout with pricing states as query parameters or state
+      navigate("/checkout", {
+        state: {
+          subtotal,
+          discountAmount,
+          shippingAmount,
+          totalAmount,
+          appliedCoupon: couponCode.trim().toUpperCase()
+        }
+      });
+    };
+
+    if (!token) {
+      triggerAuthModal(proceed, "Login required to place order");
+    } else {
+      proceed();
+    }
   };
 
   if (cartLoading && cart.length === 0) {

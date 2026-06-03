@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { CATEGORY_API } from "../../repo/Apis";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, AlertCircle } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import ProductCard from "../../components/User/ProductCard";
 import QuickViewModal from "../../components/User/QuickViewModal";
 
@@ -11,7 +11,6 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   
   // Hero Slider State
   const [activeSlide, setActiveSlide] = useState(0);
@@ -74,17 +73,9 @@ const Home = () => {
   useEffect(() => {
     const fetchHomeData = async () => {
       setLoading(true);
-      setError("");
       try {
         const token = localStorage.getItem("token");
-        // Skip fetching if no token is available to prevent API spamming with 401s
-        if (!token) {
-          setCategories(defaultCategories);
-          setLoading(false);
-          return;
-        }
-
-        const headers = { Authorization: `Bearer ${token}` };
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
         
         // Fetch Categories
         const catRes = await api.get(`${CATEGORY_API}/categories`, { headers }).catch(() => null);
@@ -201,28 +192,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Guest Warning Notification */}
-      {!token && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 w-full">
-          <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-xl flex items-start gap-3 shadow-sm">
-            <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-sm font-bold text-blue-800">Authentication Required</h4>
-              <p className="text-xs text-blue-700 mt-1">
-                The product catalog requires a user token. Please{" "}
-                <Link to="/login" className="underline font-bold text-blue-900 hover:text-blue-950">
-                  Sign In
-                </Link>{" "}
-                or{" "}
-                <Link to="/register" className="underline font-bold text-blue-900 hover:text-blue-950">
-                  Register
-                </Link>{" "}
-                to unlock the complete store database and shopping features.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* 2. Categories Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">

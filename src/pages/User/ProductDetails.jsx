@@ -13,15 +13,14 @@ import {
   ChevronRight, 
   Minus, 
   Plus, 
-  MessageSquareHeart,
-  HelpCircle
+  MessageSquareHeart
 } from "lucide-react";
 import ProductCard from "../../components/User/ProductCard";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, wishlist, addToWishlist, removeFromWishlist, token, user } = useUser();
+  const { addToCart, wishlist, addToWishlist, removeFromWishlist, token, triggerAuthModal } = useUser();
 
   // States
   const [product, setProduct] = useState(null);
@@ -120,35 +119,33 @@ const ProductDetails = () => {
   }, [id]);
 
   const handleWishlistToggle = async () => {
-    if (!token) {
-      alert("Please log in to save items to your wishlist.");
-      return;
-    }
-    setWishlistUpdating(true);
-    try {
-      if (isWishlisted) {
-        await removeFromWishlist(id);
-      } else {
-        await addToWishlist(id);
+    const toggle = async () => {
+      setWishlistUpdating(true);
+      try {
+        if (isWishlisted) {
+          await removeFromWishlist(id);
+        } else {
+          await addToWishlist(id);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setWishlistUpdating(false);
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setWishlistUpdating(false);
+    };
+
+    if (!token) {
+      triggerAuthModal(toggle);
+    } else {
+      await toggle();
     }
   };
 
   const handleAddToCart = async () => {
-    if (!token) {
-      alert("Please log in to add items to your cart.");
-      return;
-    }
     setAddingToCart(true);
-    // Add multiple quantities by loop or single add then update quantity
-    const res = await addToCart(id);
+    const res = await addToCart(id, quantity);
     if (res && res.success) {
-      // If quantity is more than 1, we sync quantity too
-      if (quantity > 1) {
+      if (token && quantity > 1) {
         await api.put(`${CATEGORY_API}/cart/update/${id}`, { quantity });
       }
       alert("Added to cart successfully!");
@@ -159,22 +156,17 @@ const ProductDetails = () => {
   };
 
   const handleBuyNow = async () => {
-    if (!token) {
-      alert("Please log in to make a purchase.");
-      return;
-    }
     setAddingToCart(true);
-    const res = await addToCart(id);
+    const res = await addToCart(id, quantity);
     if (res && res.success) {
-      if (quantity > 1) {
+      if (token && quantity > 1) {
         await api.put(`${CATEGORY_API}/cart/update/${id}`, { quantity });
       }
-      setAddingToCart(false);
       navigate("/cart");
     } else {
       alert(res?.message || "Failed to initiate purchase.");
-      setAddingToCart(false);
     }
+    setAddingToCart(false);
   };
 
   // Submit review form

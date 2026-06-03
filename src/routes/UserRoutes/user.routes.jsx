@@ -1,5 +1,6 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import { UserProvider } from "../../context/UserContext";
+import AuthModal from "../../components/User/AuthModal";
 
 // Pages
 import Home from "../../pages/User/Home";
@@ -32,6 +33,7 @@ const UserLayout = () => {
 const UserRoutes = () => {
   return (
     <UserProvider>
+      <AuthModal />
       <Routes>
         {/* Auth routes without Navbar/Footer */}
         <Route path="/login" element={<AuthPages />} />
