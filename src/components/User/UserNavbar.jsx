@@ -29,26 +29,35 @@ const UserNavbar = () => {
   // Dynamic menu states
   const [dbCategories, setDbCategories] = useState([]);
   const [dbSubcategories, setDbSubcategories] = useState([]);
+  const [dbCoupons, setDbCoupons] = useState([]);
   const [copiedCoupon, setCopiedCoupon] = useState("");
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   const wishlistCount = wishlist.length;
 
-  // Fetch Category/Subcategory list for Navbar dropdowns
+  // Fetch Category/Subcategory and Coupons list for Navbar dropdowns
   useEffect(() => {
     const fetchMenuData = async () => {
       try {
         const tokenVal = localStorage.getItem("token") || token;
         const headers = tokenVal ? { Authorization: `Bearer ${tokenVal}` } : {};
+        
         const catRes = await api.get(`${CATEGORY_API}/categories`, { headers }).catch(() => null);
         if (catRes && catRes.data) {
           const list = catRes.data.categories || catRes.data;
           if (Array.isArray(list)) setDbCategories(list);
         }
+        
         const subRes = await api.get(`${CATEGORY_API}/subcategories`, { headers }).catch(() => null);
         if (subRes && subRes.data) {
           const list = subRes.data.subcategories || subRes.data;
           if (Array.isArray(list)) setDbSubcategories(list);
+        }
+
+        const couponRes = await api.get(`${CATEGORY_API}/coupon`, { headers }).catch(() => null);
+        if (couponRes && couponRes.data) {
+          const list = Array.isArray(couponRes.data) ? couponRes.data : [];
+          setDbCoupons(list.filter(c => c.isActive));
         }
       } catch (err) {
         console.error("Error fetching menu items for dropdowns:", err);
@@ -76,10 +85,26 @@ const UserNavbar = () => {
     { id: "footwear", name: "Footwear", categoryId: "fashion" }
   ];
 
-  const coupons = [
-    { code: "WELCOME10", desc: "Get 10% discount on all purchases" },
-    { code: "SUPER20", desc: "Save 20% on orders above ₹1,500" }
+  const couponsToRender = dbCoupons.length > 0 ? dbCoupons : [
+    { code: "WELCOME10", discountType: "percentage", discountValue: 10, minOrderAmount: 0 },
+    { code: "SUPER20", discountType: "percentage", discountValue: 20, minOrderAmount: 1500 }
   ];
+
+  const getCouponDesc = (coupon) => {
+    if (coupon.desc) return coupon.desc;
+    const discValueStr = coupon.discountType === "percentage" 
+      ? `${coupon.discountValue}%` 
+      : `₹${coupon.discountValue}`;
+    
+    let desc = `Get ${discValueStr} discount on all purchases`;
+    if (coupon.minOrderAmount > 0) {
+      desc = `Save ${discValueStr} on orders above ₹${coupon.minOrderAmount.toLocaleString("en-IN")}`;
+    }
+    if (coupon.discountType === "percentage" && coupon.maxDiscount) {
+      desc += ` (Up to ₹${coupon.maxDiscount})`;
+    }
+    return desc;
+  };
 
   const handleCopyCoupon = (code) => {
     navigator.clipboard.writeText(code);
@@ -375,11 +400,11 @@ const UserNavbar = () => {
               </span>
               
               <div className="space-y-3">
-                {coupons.map((coupon) => (
+                {couponsToRender.map((coupon) => (
                   <div key={coupon.code} className="p-2.5 bg-gray-50 hover:bg-blue-50/30 border border-gray-200 rounded-xl flex items-center justify-between gap-3 text-xs">
                     <div>
                       <span className="font-extrabold text-slate-900 block">{coupon.code}</span>
-                      <span className="text-[10px] text-gray-500 font-semibold block mt-0.5">{coupon.desc}</span>
+                      <span className="text-[10px] text-gray-500 font-semibold block mt-0.5">{getCouponDesc(coupon)}</span>
                     </div>
                     <button
                       onClick={() => handleCopyCoupon(coupon.code)}
