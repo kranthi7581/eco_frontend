@@ -1,5 +1,4 @@
 import { Routes, Route, Outlet } from "react-router-dom";
-import { UserProvider } from "../../context/UserContext";
 import AuthModal from "../../components/User/AuthModal";
 
 // Pages
@@ -32,7 +31,7 @@ const UserLayout = () => {
 
 const UserRoutes = () => {
   return (
-    <UserProvider>
+    <>
       <AuthModal />
       <Routes>
         {/* Auth routes without Navbar/Footer */}
@@ -53,7 +52,7 @@ const UserRoutes = () => {
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
-    </UserProvider>
+    </>
   );
 };
 

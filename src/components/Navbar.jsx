@@ -3,9 +3,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { AUTH_API } from "../repo/Apis";
 import { Bell, Search, UserCircle, User, LogOut, MessageSquare } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
+import AdminChatDrawer from "./AdminChatDrawer";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { unreadCount } = useSocket();
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [imageError, setImageError] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -112,11 +116,16 @@ const Navbar = () => {
       <div className="flex items-center gap-6">
         
         {/* Message */}
-        <button className="relative transition-transform active:scale-95">
-          <MessageSquare size={24} className="text-gray-700 cursor-pointer hover:text-indigo-600 transition-colors" />
-          <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-            5
-          </span>
+        <button 
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="relative transition-transform active:scale-95 cursor-pointer"
+        >
+          <MessageSquare size={24} className="text-gray-700 hover:text-indigo-600 transition-colors" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              {unreadCount}
+            </span>
+          )}
         </button>
 
         {/* Notification */}
@@ -174,6 +183,9 @@ const Navbar = () => {
         </div>
 
       </div>
+
+      {/* Admin Chat Drawer */}
+      <AdminChatDrawer isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </nav>
   );
 };

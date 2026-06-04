@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
+import { useSocket } from "../../context/SocketContext";
+import UserChatWidget from "./UserChatWidget";
 import api from "../../services/api";
 import { 
   Search, 
@@ -21,6 +23,8 @@ import { CATEGORY_API } from "../../repo/Apis";
 
 const UserNavbar = () => {
   const { user, cart, wishlist, logout, token } = useUser();
+  const { unreadCount } = useSocket();
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
@@ -192,13 +196,16 @@ const UserNavbar = () => {
             
             {/* Message Icon */}
             <button 
+              onClick={() => setIsChatOpen(!isChatOpen)}
               className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors hover:bg-gray-50 rounded-full transition-transform active:scale-95 cursor-pointer"
               title="Messages"
             >
               <MessageSquare className="h-6 w-6" />
-              <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
-                5
-              </span>
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
+                  {unreadCount}
+                </span>
+              )}
             </button>
 
             {/* Wishlist Icon */}
@@ -506,10 +513,16 @@ const UserNavbar = () => {
             </div>
 
             <button
+              onClick={() => {
+                setIsChatOpen(true);
+                setIsMobileMenuOpen(false);
+              }}
               className="flex items-center justify-between w-full text-left text-base font-semibold text-gray-700 hover:text-blue-600 py-2 border-b border-gray-50 cursor-pointer"
             >
               <span>Messages</span>
-              <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">5</span>
+              {unreadCount > 0 && (
+                <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">{unreadCount}</span>
+              )}
             </button>
 
             <Link
@@ -566,6 +579,8 @@ const UserNavbar = () => {
           </div>
         </div>
       )}
+      {/* User Chat Widget */}
+      <UserChatWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </header>
   );
 };
