@@ -4,7 +4,7 @@ import { useSocket } from "../../context/SocketContext";
 import { useUser } from "../../context/UserContext";
 import api from "../../services/api";
 
-const UserChatWidget = ({ isOpen, onClose }) => {
+const UserChatWidget = ({ isOpen, onClose, isDropdown = false }) => {
   const { user, token, triggerAuthModal } = useUser();
   const {
     messages,
@@ -109,7 +109,15 @@ const UserChatWidget = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-20 right-6 z-50 w-96 h-[520px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden transition-all duration-300 transform scale-100 origin-bottom-right select-none animate-in fade-in slide-in-from-bottom-5">
+    <div 
+      className={`${
+        isDropdown 
+          ? "absolute right-0 mt-2 w-96 h-[480px]" 
+          : "fixed bottom-20 right-6 w-96 h-[520px]"
+      } z-50 bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden select-none animate-in fade-in duration-200 ${
+        isDropdown ? "slide-in-from-top-2 origin-top-right" : "slide-in-from-bottom-5 origin-bottom-right"
+      }`}
+    >
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">

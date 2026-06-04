@@ -25,6 +25,7 @@ const UserNavbar = () => {
   const { user, cart, wishlist, logout, token } = useUser();
   const { unreadCount } = useSocket();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
@@ -195,18 +196,23 @@ const UserNavbar = () => {
           <div className="hidden md:flex items-center gap-4">
             
             {/* Message Icon */}
-            <button 
-              onClick={() => setIsChatOpen(!isChatOpen)}
-              className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors hover:bg-gray-50 rounded-full transition-transform active:scale-95 cursor-pointer"
-              title="Messages"
-            >
-              <MessageSquare className="h-6 w-6" />
-              {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setIsChatOpen(!isChatOpen)}
+                className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors hover:bg-gray-50 rounded-full transition-transform active:scale-95 cursor-pointer"
+                title="Messages"
+              >
+                <MessageSquare className="h-6 w-6" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* User Chat Dropdown for Desktop */}
+              <UserChatWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} isDropdown={true} />
+            </div>
 
             {/* Wishlist Icon */}
             <Link 
@@ -514,7 +520,7 @@ const UserNavbar = () => {
 
             <button
               onClick={() => {
-                setIsChatOpen(true);
+                setIsMobileChatOpen(true);
                 setIsMobileMenuOpen(false);
               }}
               className="flex items-center justify-between w-full text-left text-base font-semibold text-gray-700 hover:text-blue-600 py-2 border-b border-gray-50 cursor-pointer"
@@ -579,8 +585,10 @@ const UserNavbar = () => {
           </div>
         </div>
       )}
-      {/* User Chat Widget */}
-      <UserChatWidget isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+      {/* User Chat Widget for Mobile */}
+      <div className="md:hidden">
+        <UserChatWidget isOpen={isMobileChatOpen} onClose={() => setIsMobileChatOpen(false)} isDropdown={false} />
+      </div>
     </header>
   );
 };
