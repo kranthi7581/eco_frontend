@@ -14,7 +14,8 @@ import {
   Tag, 
   Layers,
   Sparkles,
-  ClipboardCheck
+  ClipboardCheck,
+  MessageSquare
 } from "lucide-react";
 import { CATEGORY_API } from "../../repo/Apis";
 
@@ -189,6 +190,17 @@ const UserNavbar = () => {
           {/* Right: Actions */}
           <div className="hidden md:flex items-center gap-4">
             
+            {/* Message Icon */}
+            <button 
+              className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors hover:bg-gray-50 rounded-full transition-transform active:scale-95 cursor-pointer"
+              title="Messages"
+            >
+              <MessageSquare className="h-6 w-6" />
+              <span className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
+                5
+              </span>
+            </button>
+
             {/* Wishlist Icon */}
             <Link 
               to="/profile?tab=wishlist" 
@@ -492,6 +504,13 @@ const UserNavbar = () => {
                 ))}
               </div>
             </div>
+
+            <button
+              className="flex items-center justify-between w-full text-left text-base font-semibold text-gray-700 hover:text-blue-600 py-2 border-b border-gray-50 cursor-pointer"
+            >
+              <span>Messages</span>
+              <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">5</span>
+            </button>
 
             <Link
               to="/profile?tab=wishlist"
