@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Send, MessageSquare, Loader, Clipboard } from "lucide-react";
+import { X, Send, MessageSquare, Loader, Clipboard, Mic, Navigation } from "lucide-react";
 import { useSocket } from "../../context/SocketContext";
 import { useUser } from "../../context/UserContext";
 import api from "../../services/api";
@@ -30,10 +30,9 @@ const UserChatWidget = ({ isOpen, onClose, isDropdown = false }) => {
   // Get Admin profile details
   const fetchAdminDetails = async () => {
     try {
-      const res = await api.get("/auth/all-users");
-      const admin = res.data?.find((u) => u.role === "admin");
-      if (admin) {
-        setAdminUser(admin);
+      const res = await api.get("/chat/admin-info");
+      if (res.data) {
+        setAdminUser(res.data);
       }
     } catch (err) {
       console.error("Error fetching admin details:", err);
@@ -49,16 +48,14 @@ const UserChatWidget = ({ isOpen, onClose, isDropdown = false }) => {
   useEffect(() => {
     if (isOpen && token) {
       setLoadingHistory(true);
-      fetchAdminDetails();
       
       // Look up admin user to fetch history
-      api.get("/auth/all-users")
+      api.get("/chat/admin-info")
         .then((res) => {
-          const admin = res.data?.find((u) => u.role === "admin");
-          if (admin) {
-            setAdminUser(admin);
-            setActiveChatUserId(admin.id);
-            fetchHistory(admin.id).finally(() => setLoadingHistory(false));
+          if (res.data) {
+            setAdminUser(res.data);
+            setActiveChatUserId(res.data.id);
+            fetchHistory(res.data.id).finally(() => setLoadingHistory(false));
           } else {
             setLoadingHistory(false);
           }
@@ -233,21 +230,29 @@ const UserChatWidget = ({ isOpen, onClose, isDropdown = false }) => {
       {token && adminUser && (
         <form
           onSubmit={handleSend}
-          className="p-3 bg-white border-t border-gray-100 flex gap-2 items-center"
+          className="p-3 bg-white border-t border-gray-150 flex gap-2 items-center"
         >
-          <input
-            type="text"
-            placeholder="Type a message..."
-            value={inputMessage}
-            onChange={handleInputChange}
-            className="flex-1 bg-gray-50 hover:bg-gray-100/50 focus:bg-white border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm py-2 px-4 rounded-full transition-all focus:outline-none text-gray-800"
-          />
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Message..."
+              value={inputMessage}
+              onChange={handleInputChange}
+              className="w-full bg-gray-100/80 hover:bg-gray-100 focus:bg-white border border-transparent focus:border-gray-200 text-sm py-2.5 pl-4 pr-10 rounded-full transition-all focus:outline-none text-gray-800 placeholder-gray-400 font-medium"
+            />
+            <button
+              type="button"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              <Mic className="h-4 w-4 text-gray-400" />
+            </button>
+          </div>
           <button
             type="submit"
             disabled={!inputMessage.trim()}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 text-white p-2 rounded-full transition-colors disabled:cursor-not-allowed cursor-pointer"
+            className="bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-650 hover:to-fuchsia-700 disabled:from-gray-200 disabled:to-gray-300 text-white p-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-200 disabled:cursor-not-allowed cursor-pointer disabled:shadow-none shrink-0"
           >
-            <Send className="h-4 w-4" />
+            <Navigation className="h-4.5 w-4.5 rotate-45 transform" />
           </button>
         </form>
       )}
