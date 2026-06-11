@@ -34,6 +34,24 @@ const OrdersPage = () => {
 
   useEffect(() => {
     fetchOrders();
+
+    const handleNewOrder = (event) => {
+      const { order } = event.detail;
+      if (order) {
+        setOrders((prevOrders) => {
+          // Prevent duplicates if list is refreshed concurrently
+          if (prevOrders.some((o) => o.id === order.id)) {
+            return prevOrders;
+          }
+          return [order, ...prevOrders];
+        });
+      }
+    };
+
+    window.addEventListener("new-order-alert", handleNewOrder);
+    return () => {
+      window.removeEventListener("new-order-alert", handleNewOrder);
+    };
   }, []);
 
   const handleStatusChange = async (orderId, newStatus) => {
