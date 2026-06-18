@@ -17,6 +17,7 @@ import AddProduct from "../../components/AddProduct";
 import EditProduct from "../../components/EditProduct";
 import EditUser from "../../components/EditUser";
 import AddUser from "../../components/AddUser";
+import SubscriptionsPage from "../../pages/Admin/Subscriptions";
 
 const AdminPages = () => {
   return (
@@ -100,6 +101,14 @@ const AdminPages = () => {
         element={
           <AdminLayout>
             <PaymentsPage />
+          </AdminLayout>
+        }
+      />
+      <Route
+        path="/admin/subscriptions"
+        element={
+          <AdminLayout>
+            <SubscriptionsPage />
           </AdminLayout>
         }
       />

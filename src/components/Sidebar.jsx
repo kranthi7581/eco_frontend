@@ -7,6 +7,7 @@ import {
   TicketPercent,
   CreditCard,
   Users,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -19,15 +20,15 @@ const AdminSidebar = () => {
     { name: "Order Status", path: "/admin/order-status", icon: <ClipboardList size={20} /> },
     { name: "Coupons", path: "/admin/coupons", icon: <TicketPercent size={20} /> },
     { name: "Payments", path: "/admin/payments", icon: <CreditCard size={20} /> },
+    { name: "Subscriptions", path: "/admin/subscriptions", icon: <Sparkles size={20} /> },
     { name: "Users List", path: "/admin/users", icon: <Users size={20} /> },
   ];
 
   return (
     <aside className="h-full w-64 shrink-0 overflow-y-auto bg-gray-900 text-white shadow-lg">
-      {/* Logo
       <div className="p-6 text-2xl font-bold border-b border-gray-700">
         Admin Panel
-      </div> */}
+      </div>
 
       {/* Menu */}
       <ul className="mt-6 space-y-2 px-4">

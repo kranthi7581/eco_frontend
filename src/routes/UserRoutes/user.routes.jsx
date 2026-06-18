@@ -12,6 +12,7 @@ import Checkout from "../../pages/User/Checkout";
 import PaymentSuccess from "../../pages/User/PaymentSuccess";
 import Profile from "../../pages/User/Profile";
 import AuthPages from "../../pages/User/AuthPages";
+import Subscriptions from "../../pages/User/Subscriptions";
 
 // Components
 import UserNavbar from "../../components/User/UserNavbar";
@@ -50,6 +51,7 @@ const UserRoutes = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/success" element={<PaymentSuccess />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
         </Route>
       </Routes>
     </>

@@ -449,6 +449,15 @@ const UserNavbar = () => {
             </div>
           </div>
 
+          {/* SUBSCRIPTIONS LINK */}
+          <Link 
+            to="/subscriptions" 
+            className="flex items-center gap-1 hover:text-white transition-colors py-1 px-2 hover:bg-slate-800 rounded-md"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Subscriptions</span>
+          </Link>
+
         </div>
       </div>
 
@@ -478,6 +487,14 @@ const UserNavbar = () => {
               className="text-base font-semibold text-gray-700 hover:text-blue-600 py-2 border-b border-gray-50"
             >
               All Products
+            </Link>
+
+            <Link
+              to="/subscriptions"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-base font-semibold text-gray-700 hover:text-blue-600 py-2 border-b border-gray-50"
+            >
+              Subscriptions
             </Link>
 
             {/* Mobile Categories navigation */}
